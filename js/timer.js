@@ -11,6 +11,7 @@ function cronometro(){
 		$j('#timer').text('0'+minutos+':0'+segundos)
 	}
 	if ((segundos== -1)&&(minutos==0)) {
+		clearInterval(buscaImagenesIguales);
 		clearInterval(tiempo);
 		clearInterval(cronometro);
 		segundos=0;

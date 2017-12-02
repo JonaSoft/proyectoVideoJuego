@@ -1,6 +1,7 @@
 var $j=jQuery.noConflict();
 document.observe("dom:loaded", function(){
 	var valorActual=0
+	valor=0
 	contador=0
 	columnasTablero=$j('.panel-tablero').children()
 	matriz=[]
@@ -13,14 +14,12 @@ document.observe("dom:loaded", function(){
 				($j('.btn-reinicio').text('Reiniciar'));
 				($j('#score-text').text('0'));
 				inicio();//ACTIVA CRONOMETRO DEL TIMER
-				iniciando=setInterval(buscaImagenesIguales,1300); //BUSCA IMAGENES IGUALES CADA 1.3 SEGUNDOS
-				desplazaDulce();// ACTIVA MOVILIDAD DE IMAGEN
-				$j('img').bind('click',cuentaMovimientos); //EVENTO PARA CONTEO DE MOVIMIENTOS
-				iniciando=setInterval(buscaImagenesIguales,1300);
+				iniciando=setInterval(buscaImagenesIguales,2000); //BUSCA IMAGENES IGUALES CADA 1.3 SEGUNDOS
+				cuenta()//CONTADOR DE MOVIMIENTOS
 			}
 		});
 	animaTitulo();
-	generaImagenes()
+	generaImagenes();
 })
 //**********FUNCION DE ANIMACION DEL TITULO***************
 	function animaTitulo(){
@@ -160,16 +159,29 @@ document.observe("dom:loaded", function(){
 							if ((fila5).readAttribute('src') == (fila6).readAttribute('src')){
 								matriz.push($j(fila6))
 								if ((fila6).readAttribute('src') == (fila7).readAttribute('src')){
+									matriz.push($j(fila7))
+								}
+							}
+						} else if (((fila5).readAttribute('src') == (fila6).readAttribute('src'))&&
+						((fila6).readAttribute('src') == (fila7).readAttribute('src'))){
+							matriz.push($j(fila5));
+							matriz.push($j(fila6));
+							matriz.push($j(fila7))
+						}
+					}else if (((fila4).readAttribute('src') == (fila5).readAttribute('src'))&&
+						((fila5).readAttribute('src') == (fila6).readAttribute('src'))){
+							matriz.push($j(fila4));
+							matriz.push($j(fila5));
+							matriz.push($j(fila6))
+							if ((fila6).readAttribute('src') == (fila7).readAttribute('src')){
 									matriz.push($j(fila7));
 								}
 							}
-						}
-					}
 				}else if (((fila2).readAttribute('src') == (fila3).readAttribute('src'))&&
 							((fila3).readAttribute('src') == (fila4).readAttribute('src'))) {
 							matriz.push($j(fila2));
 							matriz.push($j(fila3));
-							matriz.push($j(fila4));
+							matriz.push($j(fila4))
 							if ((fila4).readAttribute('src') == (fila5).readAttribute('src')){
 								matriz.push($j(fila5))
 								if ((fila5).readAttribute('src') == (fila6).readAttribute('src')){
@@ -178,12 +190,17 @@ document.observe("dom:loaded", function(){
 										matriz.push($j(fila7));
 									}
 								}
-							}
+							}else if (((fila5).readAttribute('src') == (fila6).readAttribute('src'))&&
+									((fila6).readAttribute('src') == (fila7).readAttribute('src'))){
+										matriz.push($j(fila5));
+										matriz.push($j(fila6));
+										matriz.push($j(fila7))
+								}
 				}else if (((fila3).readAttribute('src') == (fila4).readAttribute('src'))&&
 							((fila4).readAttribute('src') == (fila5).readAttribute('src'))) {
 							matriz.push($j(fila3));
 							matriz.push($j(fila4));
-							matriz.push($j(fila5));
+							matriz.push($j(fila5))
 							if ((fila5).readAttribute('src') == (fila6).readAttribute('src')){
 								matriz.push($j(fila6))
 								if ((fila6).readAttribute('src') == (fila7).readAttribute('src')){
@@ -208,56 +225,55 @@ document.observe("dom:loaded", function(){
 		animaIguales();
 		}
 	///******************FUNCION PARA ANIMACION DE DULCES*********************
+		
 		function animaIguales(){
 			$j.each(matriz,function(index,value){
 				animacionDulce(value)
 				function animacionDulce(elemento){
 					elemento.animate({
-					opacity:0.10
-					},90,function(){retornaAnimacion(elemento)})
+					opacity:0.25
+					},100,function(){retornaAnimacion(elemento)})
 				}
 				function retornaAnimacion(elemento){
 					elemento.animate({
 					opacity:1
-					},90,function(){animacionDulce(elemento)})
+					},100,function(){animacionDulce(elemento)})
 				}
 
 			})
-		puntaje();
+			puntaje();
 		}
 	//*************ASIGNACION DE PUNTOS**************
 		function puntaje(){
 			setTimeout(function(){
-			//alert(matriz.length);
-			$j.each(matriz,function(index,value){
-				var valorActual=$j('#score-text').html()//ASIGNA PUNTOS
-				valorActual=parseInt(valorActual)+10;
-				//setInterval($j('#score-text').text(valorActual),10);
-				 $j('#score-text').delay(200).html(valorActual)
-
-			})
-			},1000)
-		reemplazaAnimaciones();
+				$j.each(matriz,function(index,value){
+					var valorActual=$j('#score-text').html()//ASIGNA PUNTOS
+					valorActual=parseInt(valorActual)+10;
+					$j('#score-text').html(valorActual)
+				})
+			},2500)
+			reemplazaAnimaciones();
 		}
+
 	//*************//ESCOGE ANIMACIONES POR COLUMNA PARA REEMPLAZAR IMAGENES*****************
 		function reemplazaAnimaciones(){
 			setTimeout(function() {
 				for (var i = 0; i < matriz.length+1; i++) {
 					$j(matriz[i]).hide(900,function(){
-						$j(this).show().remove();
-						if (i=7){ //cuando oculto todos los animados ahora los vuelve a llenar
-							for (var i = 1; i < columnasTablero.length+1; i++) {
-								espacioLibre=(7- $j('.col-'+i+' img').length)//RELLENA ESPACIOS  DE MATRIZ CON NUEVOS DULCES
-								imagen=Math.floor((Math.random()*4)+1)+'.png';
-								$j('.col-'+i+' img:nth-child('+espacioLibre+')').before("<img class="+imagen.substr(0,1)+" src=image/"+imagen+">");
-								$j('.col-'+i+' img:nth-child('+espacioLibre+')').addClass('elemento');
-								$j('.col-'+i+' img:nth-child('+espacioLibre+')').bind('click',cuentaMovimientos)
-							}
+						$j(this).show().detach();
+						for (var i = 1; i < columnasTablero.length+1; i++) {
+							espacioLibre=(7- $j('.col-'+i+' img').length)//RELLENA ESPACIOS  DE MATRIZ CON NUEVOS DULCES
+							imagen=Math.floor((Math.random()*4)+1)+'.png';
+							$j('.col-'+i+' img:nth-child('+espacioLibre+')').before("<img class="+imagen.substr(0,1)+" src=image/"+imagen+">");
+							$j('.col-'+i+' img:nth-child('+espacioLibre+')').addClass('elemento');
 						}
 					})
 				}
-			},2000)
-		desplazaDulce();
+		
+			},2500)
+			setTimeout(function() {
+				desplazaDulce();
+			}, 500);
 		}
 	//*****************ACTIVA MOVIMIENTO DE DULCES ***************
 		function desplazaDulce(){
@@ -267,9 +283,11 @@ document.observe("dom:loaded", function(){
 			}
 		}
 	//*****************CUENTA MOVIMIENTO POR DULCE*****************
-		function cuentaMovimientos(e){
-			clearInterval(iniciando);
-			contador=contador+1;
-			$j('#movimientos-text').html(parseInt(contador))
-
+		function cuenta(){
+			$j('.panel-tablero div').mouseup(function(){
+				clearInterval(iniciando);
+				contador=contador+1
+				$j('#movimientos-text').html(parseInt(contador));
+				iniciando=setInterval(buscaImagenesIguales,2000);		
+			});	
 		}
