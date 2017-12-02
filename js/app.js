@@ -273,7 +273,7 @@ document.observe("dom:loaded", function(){
 			},2500)
 			setTimeout(function() {
 				desplazaDulce();
-			}, 500);
+			}, 300);
 		}
 	//*****************ACTIVA MOVIMIENTO DE DULCES ***************
 		function desplazaDulce(){
