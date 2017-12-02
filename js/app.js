@@ -269,7 +269,6 @@ document.observe("dom:loaded", function(){
 						}
 					})
 				}
-		
 			},2500)
 			setTimeout(function() {
 				desplazaDulce();
@@ -285,6 +284,12 @@ document.observe("dom:loaded", function(){
 	//*****************CUENTA MOVIMIENTO POR DULCE*****************
 		function cuenta(){
 			$j('.panel-tablero div').mouseup(function(){
+				clearInterval(iniciando);
+				contador=contador+1
+				$j('#movimientos-text').html(parseInt(contador));
+				iniciando=setInterval(buscaImagenesIguales,2000);		
+			});	
+			$j('.panel-tablero div').mousedown(function(){
 				clearInterval(iniciando);
 				contador=contador+1
 				$j('#movimientos-text').html(parseInt(contador));
